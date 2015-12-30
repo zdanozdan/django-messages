@@ -10,6 +10,14 @@ AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 class MessageManager(models.Manager):
 
+    def view_for(self, user, message_id):
+
+        return self.filter(
+            recipient=user,
+            id=message_id,
+            recipient_deleted_at__isnull=True,
+        )
+        
     def inbox_for(self, user):
         """
         Returns all messages that were received by the given user and are not
