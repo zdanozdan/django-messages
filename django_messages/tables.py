@@ -19,7 +19,7 @@ class MessagesTableOutbox(MessagesTable):
     class Meta:
         sequence = ("recipient",)
 
-class MessagesTableTrash(MessagesTable):
+class MessagesTableTrash(MessagesTableInbox):
     action = tables.TemplateColumn(template_name="django_messages/undelete_column.html",verbose_name=_('Action'))
 
 class MessagesTableView(MessagesTableInbox):

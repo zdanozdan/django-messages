@@ -23,7 +23,7 @@ class MessageManager(models.Manager):
         Returns all messages that were received by the given user and are not
         marked as deleted.
         """
-        return self.filter(
+        return self.select_related('sender').filter(
             recipient=user,
             recipient_deleted_at__isnull=True,
         )
@@ -33,7 +33,7 @@ class MessageManager(models.Manager):
         Returns all messages that were sent by the given user and are not
         marked as deleted.
         """
-        return self.filter(
+        return self.select_related('recipient').filter(
             sender=user,
             sender_deleted_at__isnull=True,
         )
@@ -43,7 +43,7 @@ class MessageManager(models.Manager):
         Returns all messages that were either received or sent by the given
         user and are marked as deleted.
         """
-        return self.filter(
+        return self.select_related('sender').filter(
             recipient=user,
             recipient_deleted_at__isnull=False,
         ) | self.filter(
