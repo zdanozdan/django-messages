@@ -23,5 +23,5 @@ class MessagesTableTrash(MessagesTableInbox):
     action = tables.TemplateColumn(template_name="django_messages/undelete_column.html",verbose_name=_('Action'))
 
 class MessagesTableView(MessagesTableInbox):
-    body = tables.Column(verbose_name=_('Body'))
+    body = tables.TemplateColumn(template_name="django_messages/full_body_column.html", verbose_name=_('Body'))
 
