@@ -6,9 +6,16 @@
 you received a private message from {{ sender }} with
 the following contents:{% endblocktrans %}
 
+<br>
+<br>
 {{ message.body|safe }}
 
+<br>
+<br>
 --
+<br>
 {% blocktrans %}Sent from {{ site_url }}{% endblocktrans %}
+<br>
 {% trans "Inbox" %}: {{ site_url }}{% url 'messages_inbox' %}
+<br>
 {% trans "Reply" %}: {{ site_url }}{% url 'messages_reply' message.pk %}     
