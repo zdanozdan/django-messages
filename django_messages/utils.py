@@ -55,7 +55,8 @@ def format_subject(subject):
         'subject': subject, 
         'prefix': prefix
     }
-    
+
+from django.core.mail import EmailMultiAlternatives
 def new_message_email(sender, instance, signal, 
         subject_prefix=_(u'New Message: %(subject)s'),
         template_name="django_messages/new_message.html",
@@ -80,9 +81,20 @@ def new_message_email(sender, instance, signal,
                 'message': instance,
             })
             if instance.recipient.email != "":
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-                    [instance.recipient.email,])
+                email_message = EmailMultiAlternatives(
+                    subject,
+                    message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[instance.recipient.email]
+                )
+
+                email_message.attach_alternative(message,"text/html")
+                email_message.send()
+
+                #send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,[instance.recipient.email,])
+                
         except Exception as e:
+            raise e
             #print e
             pass #fail silently
 
