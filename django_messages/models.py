@@ -54,6 +54,14 @@ class MessageManager(models.Manager):
 
 @python_2_unicode_compatible
 class Message(models.Model):
+    TEXT_NOTIF = 0
+    RESULTS_NOTIF = 1
+    RANK_NOTIF = 2
+    NOTIF_CHOICES = (
+        (TEXT_NOTIF, _('Text message')),
+        (RESULTS_NOTIF, _('Results notification')),
+        (RANK_NOTIF,_("Ranking notification")),
+        )
     """
     A private message from user to user
     """
@@ -68,6 +76,7 @@ class Message(models.Model):
     sender_deleted_at = models.DateTimeField(_("Sender deleted at"), null=True, blank=True)
     recipient_deleted_at = models.DateTimeField(_("Recipient deleted at"), null=True, blank=True)
     is_safe = models.BooleanField(verbose_name=_("is safe"),default=False)
+    notif_type = models.PositiveSmallIntegerField(verbose_name=("notification type"),choices=NOTIF_CHOICES,default=TEXT_NOTIF)
 
     objects = MessageManager()
 
