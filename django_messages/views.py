@@ -271,3 +271,29 @@ def view_original_(request, message_id, form_class=ComposeForm, quote_helper=for
         context['reply_form'] = form
     return render_to_response(template_name, context,
         context_instance=RequestContext(request))
+
+#API
+from django_messages.serializers import MessagesSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view,authentication_classes,permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def api_inbox(request,username):
+    '''
+    TEXT_NOTIF = 0
+    RESULTS_NOTIF = 1
+    RANK_NOTIF = 2
+    '''
+
+    message_list = Message.objects.select_related('sender').filter(recipient__username=username,recipient_deleted_at__isnull=True)
+    
+    serializer = MessagesSerializer(message_list, many=True)
+    try:
+        return Response(serializer.data)
+    except Exception, e:
+        return Response({'error':str(e)})
+    return Response({'msg':'str(e)'})
