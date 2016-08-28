@@ -34,7 +34,7 @@ class MessageAdminForm(forms.ModelForm):
         model = Message
         fields = ('sender', 'recipient', 'group', 'parent_msg', 'subject',
                 'body', 'sent_at', 'read_at', 'replied_at', 'sender_deleted_at',
-                'recipient_deleted_at')
+                'recipient_deleted_at','notif_type')
 
 class MessageAdmin(admin.ModelAdmin):
     form = MessageAdminForm
@@ -43,6 +43,7 @@ class MessageAdmin(admin.ModelAdmin):
             'fields': (
                 'sender',
                 ('recipient', 'group'),
+                'notif_type',
             ),
         }),
         (_('Message'), {
@@ -61,7 +62,7 @@ class MessageAdmin(admin.ModelAdmin):
         }),
     )
     list_display = ('subject', 'sender', 'recipient', 'sent_at', 'read_at')
-    list_filter = ('sent_at', 'sender', 'recipient')
+    list_filter = ('sent_at','notif_type')
     search_fields = ('subject', 'body')
     raw_id_fields = ('sender', 'recipient', 'parent_msg')
 
