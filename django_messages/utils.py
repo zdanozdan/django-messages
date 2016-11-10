@@ -72,7 +72,7 @@ def new_message_email(sender, instance, signal,
     if default_protocol is None:
         default_protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
 
-    if 'created' in kwargs and kwargs['created']:
+    if instance.skip_email==False and 'created' in kwargs and kwargs['created']:
         try:
             current_domain = Site.objects.get_current().domain
             subject = subject_prefix % {'subject': instance.subject}
