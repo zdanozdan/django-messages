@@ -77,6 +77,7 @@ class Message(models.Model):
     recipient_deleted_at = models.DateTimeField(_("Recipient deleted at"), null=True, blank=True)
     is_safe = models.BooleanField(verbose_name=_("is safe"),default=False)
     notif_type = models.PositiveSmallIntegerField(verbose_name=("notification type"),choices=NOTIF_CHOICES,default=TEXT_NOTIF)
+    skip_email = models.BooleanField(verbose_name=_("skip sending email"),default=False)
 
     objects = MessageManager()
 
@@ -103,6 +104,10 @@ class Message(models.Model):
         if not self.id:
             self.sent_at = timezone.now()
         super(Message, self).save(**kwargs)
+
+    @property
+    def is_results_notif(self):
+        return True if self.notif_type == self.RESULTS_NOTIF else False
 
     class Meta:
         ordering = ['-sent_at']
