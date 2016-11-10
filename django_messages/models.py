@@ -109,6 +109,11 @@ class Message(models.Model):
     def is_results_notif(self):
         return True if self.notif_type == self.RESULTS_NOTIF else False
 
+    def mark_read(self):
+        now = timezone.now()
+        self.read_at = now
+        return now
+
     class Meta:
         ordering = ['-sent_at']
         verbose_name = _("Message")

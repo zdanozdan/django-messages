@@ -273,6 +273,7 @@ def view_original_(request, message_id, form_class=ComposeForm, quote_helper=for
         context_instance=RequestContext(request))
 
 #API
+from api.token import EnduTokenAuthentication,EnduTokenPermission
 from django_messages.serializers import MessagesSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,authentication_classes,permission_classes
@@ -297,3 +298,15 @@ def api_inbox(request,username):
     except Exception, e:
         return Response({'error':str(e)})
     return Response({'msg':'str(e)'})
+
+@api_view(['POST',])
+@authentication_classes((EnduTokenAuthentication,))
+@permission_classes((IsAuthenticated,EnduTokenPermission))
+def api_mark_read(request,username,message_id):
+    try:
+        m = Message.objects.get(id=message_id,recipient__username=username)
+        timestamp = m.mark_read()
+        m.save()
+        return Response({'read_at':timestamp})
+    except Exception, e:
+        return Response({'error':str(e)})

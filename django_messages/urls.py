@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^undelete/(?P<message_id>[\d]+)/$', undelete, name='messages_undelete'),
     url(r'^trash/$', trash, name='messages_trash'),
     url(r'^api/inbox/(?P<username>[-\w]+)/$', api_inbox, name='api_inbox'),
+    url(r'^api/inbox/(?P<username>[-\w]+)/mark/(?P<message_id>[\d]+)/$', api_mark_read, name='api_mark_read'),
 )
