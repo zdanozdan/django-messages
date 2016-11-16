@@ -300,8 +300,10 @@ def api_inbox(request,username):
     return Response({'msg':'str(e)'})
 
 @api_view(['POST',])
-@authentication_classes((EnduTokenAuthentication,))
-@permission_classes((IsAuthenticated,EnduTokenPermission))
+#@authentication_classes((EnduTokenAuthentication,))
+#@permission_classes((IsAuthenticated,EnduTokenPermission))
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def api_mark_read(request,username,message_id):
     try:
         m = Message.objects.get(id=message_id,recipient__username=username)
