@@ -36,12 +36,18 @@ def inbox(request, template_name='django_messages/inbox.html'):
     table = MessagesTableInbox(data=f.qs)
 
     RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
-    
-    return render_to_response(template_name, {
-        'filter' : f,
-        'table' : table,
-    }, context_instance=RequestContext(request))
 
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['message_list']=message_list
+    context['message_filter']=f
+    context['table']=table
+    context['username']=request.user.username
+    context['athlete']=request.user
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
+    
 @login_required
 def outbox(request, template_name='django_messages/outbox.html'):
     """
@@ -55,11 +61,17 @@ def outbox(request, template_name='django_messages/outbox.html'):
 
     RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
 
-    return render_to_response(template_name, {
-        'filter' : f,
-        'table' : table,
-    }, context_instance=RequestContext(request))
-    
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['message_list']=message_list
+    context['message_filter']=f
+    context['table']=table
+    context['username']=request.user.username
+    context['athlete']=request.user
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
+
 @login_required
 def trash(request, template_name='django_messages/trash.html'):
     """
@@ -75,14 +87,21 @@ def trash(request, template_name='django_messages/trash.html'):
 
     RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
 
-    return render_to_response(template_name, {
-        'filter' : f,
-        'table' : table,
-    }, context_instance=RequestContext(request))
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['message_list']=message_list
+    context['message_filter']=f
+    context['table']=table
+    context['username']=request.user.username
+    context['athlete']=request.user
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
 
 @login_required
 def compose(request, recipient=None, form_class=ComposeForm,
         template_name='django_messages/compose.html', success_url=None, recipient_filter=None):
+
     """
     Displays and handles the ``form_class`` form to compose new messages.
     Required Arguments: None
@@ -110,9 +129,15 @@ def compose(request, recipient=None, form_class=ComposeForm,
         if recipient is not None:
             recipients = [u for u in User.objects.filter(**{'%s__in' % get_username_field(): [r.strip() for r in recipient.split('+')]})]
             form.fields['recipient'].initial = recipients
-    return render_to_response(template_name, {
-        'form': form,
-    }, context_instance=RequestContext(request))
+
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['username']=request.user.username
+    context['athlete']=request.user
+    context['form']=form
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
 
 @login_required
 def reply(request, message_id, form_class=ComposeForm,
@@ -146,11 +171,17 @@ def reply(request, message_id, form_class=ComposeForm,
             'subject': subject_template % {'subject': parent.subject},
             'recipient': [parent.sender,]
             })
-    return render_to_response(template_name, {
-        'form': form,
-        'message':parent,
-    }, context_instance=RequestContext(request))
 
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['username']=request.user.username
+    context['athlete']=request.user
+    context['form']=form
+    context['message']=parent
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
+        
 @login_required
 def delete(request, message_id, success_url=None):
     """
@@ -231,6 +262,16 @@ def view(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
     table = MessagesTableView(data=f.qs)
 
     RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
+
+    import endu
+    context = endu.views.user_results_context(request,request.user.username)
+
+    context['username']=request.user.username
+    context['athlete']=request.user
+    context['message_filter']=f
+    context['table']=table
+
+    return render_to_response(template_name,context,context_instance=RequestContext(request))
     
     return render_to_response(template_name, {
         'filter' : f,
