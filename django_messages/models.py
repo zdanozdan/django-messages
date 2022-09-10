@@ -94,7 +94,7 @@ class Message(models.Model):
         return False
 
     def __str__(self):
-        return self.subject
+        return "Message with id %s sent %s from %s to %s" % (self.id, self.sent_at,self.sender,self.recipient)
 
     def get_absolute_url(self):
         return ('messages_detail', [self.id])
@@ -113,6 +113,15 @@ class Message(models.Model):
         now = timezone.now()
         self.read_at = now
         return now
+
+    def get_parents(self,include_self=True,r=[]):
+        if include_self:
+            r.append(self)
+
+        if self.parent_msg:
+            return self.parent_msg.get_parents(True,r)
+
+        return r
 
     class Meta:
         ordering = ['-sent_at']
