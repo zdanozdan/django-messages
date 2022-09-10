@@ -54,3 +54,6 @@ class ComposeForm(forms.Form):
                     notification.send([sender], "messages_sent", {'message': msg,})
                     notification.send([r], "messages_received", {'message': msg,})
         return message_list
+
+class ReplyForm(ComposeForm):
+    body = forms.CharField(label=_(u"Reply"),widget=forms.Textarea(attrs={'rows': '6', 'cols':'55'}))
