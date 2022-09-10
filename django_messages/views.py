@@ -12,7 +12,7 @@ from django_tables2 import RequestConfig
 from django_messages.tables import MessagesTableInbox,MessagesTableOutbox,MessagesTableTrash,MessagesTableView
 from django_messages.filtersets import MessagesFilter
 from django_messages.models import Message
-from django_messages.forms import ComposeForm
+from django_messages.forms import ComposeForm,ReplyForm
 from django_messages.utils import format_quote, get_user_model, get_username_field
 
 User = get_user_model()
@@ -163,7 +163,7 @@ def reply(request, message_id, form_class=ComposeForm,
             form.save(sender=request.user, parent_msg=parent)
             messages.info(request, _(u"Message successfully sent."))
             if success_url is None:
-                success_url = reverse('messages_inbox')
+                success_url = reverse('messages_view', kwargs={'message_id':message_id})
             return HttpResponseRedirect(success_url)
     else:
         form = form_class(initial={
@@ -245,9 +245,7 @@ def undelete(request, message_id, success_url=None):
     raise Http404
 
 @login_required
-def view(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
-        subject_template=_(u"Re: %(subject)s"),
-        template_name='django_messages/view.html'):
+def view(request, message_id, form_class=ReplyForm, quote_helper=format_quote,subject_template=_(u"Re: %(subject)s"),template_name='django_messages/view.html'):
 
     message = get_object_or_404(Message, id=message_id)
     if (message.sender != request.user) and (message.recipient != request.user):
@@ -257,27 +255,40 @@ def view(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
         message.read_at = timezone.now()
         message.save()
 
-    message_list = Message.objects.view_for(request.user,message_id)
-    f = MessagesFilter(request.GET,queryset=message_list)
-    table = MessagesTableView(data=f.qs)
+    if request.method == "POST":
+        sender = request.user
+        form = form_class(request.POST)
+        if form.is_valid():
+            message_list = form.save(sender=request.user, parent_msg=message)
+            messages.info(request, _(u"Message successfully sent."))
+            success_url = reverse('messages_detail', kwargs={'message_id':message_list[-1].id})
+            return HttpResponseRedirect(success_url)
 
-    RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
+        #message_list = Message.objects.view_for(request.user,message_id)
+    #f = MessagesFilter(request.GET,queryset=message_list)
+    #table = MessagesTableView(data=f.qs)
+
+    message_list = message.get_parents(include_self=False,r=[])
+
+    #RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
 
     import endu
     context = endu.views.user_results_context(request,request.user.username)
 
     context['username']=request.user.username
     context['athlete']=request.user
-    context['message_filter']=f
-    context['table']=table
+    context['message']=message
+    context['message_list']=message_list
+
+    form = ReplyForm(initial={
+        'body': quote_helper(message.sender, message.body),
+        'subject': subject_template % {'subject': message.subject},
+        'recipient': [message.sender,]
+    })
+
+    context['form'] = form
 
     return render_to_response(template_name,context,context_instance=RequestContext(request))
-    
-    return render_to_response(template_name, {
-        'filter' : f,
-        'table' : table,
-    }, context_instance=RequestContext(request))
-
 
 @login_required
 def view_original_(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
