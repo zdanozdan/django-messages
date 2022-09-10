@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class MessagesTable(tables.Table):
     subject = tables.TemplateColumn(template_name="django_messages/subject_column.html",verbose_name=_('Subject'))
-    body = tables.TemplateColumn(template_name="django_messages/body_column.html",verbose_name=_('Body'))
+    #body = tables.TemplateColumn(template_name="django_messages/body_column.html",verbose_name=_('Body'))
     sent_at = tables.TemplateColumn(template_name="django_messages/received_column.html",verbose_name=_('Received'))
     action = tables.TemplateColumn(template_name="django_messages/action_column.html",verbose_name=_('Action'))
 
@@ -23,5 +23,6 @@ class MessagesTableTrash(MessagesTableInbox):
     action = tables.TemplateColumn(template_name="django_messages/undelete_column.html",verbose_name=_('Action'))
 
 class MessagesTableView(MessagesTableInbox):
-    body = tables.TemplateColumn(template_name="django_messages/full_body_column.html", verbose_name=_('Body'))
+    pass
+    #body = tables.TemplateColumn(template_name="django_messages/full_body_column.html", verbose_name=_('Body'))
 
