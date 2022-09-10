@@ -251,10 +251,6 @@ def view(request, message_id, form_class=ReplyForm, quote_helper=format_quote,su
     if (message.sender != request.user) and (message.recipient != request.user):
         raise Http404
 
-    if message.read_at is None and message.recipient == request.user:
-        message.read_at = timezone.now()
-        message.save()
-
     if request.method == "POST":
         sender = request.user
         form = form_class(request.POST)
@@ -263,14 +259,23 @@ def view(request, message_id, form_class=ReplyForm, quote_helper=format_quote,su
             messages.info(request, _(u"Message successfully sent."))
             success_url = reverse('messages_detail', kwargs={'message_id':message_list[-1].id})
             return HttpResponseRedirect(success_url)
+    else:
+        if message.notif_type == Message.TEXT_NOTIF:
+            body = quote_helper(message.sender, message.body)
+        else:
+            body = ''
 
-        #message_list = Message.objects.view_for(request.user,message_id)
-    #f = MessagesFilter(request.GET,queryset=message_list)
-    #table = MessagesTableView(data=f.qs)
+        form = ReplyForm(initial={
+            'body': body,
+            'subject': subject_template % {'subject': message.subject},
+            'recipient': [message.sender,]
+        })
+
+    if message.read_at is None and message.recipient == request.user:
+        message.read_at = timezone.now()
+        message.save()
 
     message_list = message.get_parents(include_self=False,r=[])
-
-    #RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
 
     import endu
     context = endu.views.user_results_context(request,request.user.username)
@@ -280,11 +285,7 @@ def view(request, message_id, form_class=ReplyForm, quote_helper=format_quote,su
     context['message']=message
     context['message_list']=message_list
 
-    form = ReplyForm(initial={
-        'body': quote_helper(message.sender, message.body),
-        'subject': subject_template % {'subject': message.subject},
-        'recipient': [message.sender,]
-    })
+
 
     context['form'] = form
 
