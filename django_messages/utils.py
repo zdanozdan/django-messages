@@ -70,7 +70,7 @@ def new_message_email(sender, instance, signal,
         ``default_protocol``: default protocol in site URL passed to template
     """
     if default_protocol is None:
-        default_protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
+        default_protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'https')
 
     if instance.skip_email==False and 'created' in kwargs and kwargs['created']:
         try:
