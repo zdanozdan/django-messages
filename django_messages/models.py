@@ -57,10 +57,12 @@ class Message(models.Model):
     TEXT_NOTIF = 0
     RESULTS_NOTIF = 1
     RANK_NOTIF = 2
+    FOLLOW_NOTIF = 3
     NOTIF_CHOICES = (
         (TEXT_NOTIF, _('Text message')),
         (RESULTS_NOTIF, _('Results notification')),
         (RANK_NOTIF,_("Ranking notification")),
+        (FOLLOW_NOTIF,_("Follow notification")),
         )
     """
     A private message from user to user
