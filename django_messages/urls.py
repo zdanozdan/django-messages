@@ -1,9 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic import RedirectView
 
 from django_messages.views import *
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', RedirectView.as_view(permanent=True, url='inbox/'), name='messages_redirect'),
     url(r'^inbox/$', inbox, name='messages_inbox'),
     url(r'^outbox/$', outbox, name='messages_outbox'),
@@ -16,4 +16,4 @@ urlpatterns = patterns('',
     url(r'^trash/$', trash, name='messages_trash'),
     url(r'^api/inbox/(?P<username>[-\w]+)/$', api_inbox, name='api_inbox'),
     url(r'^api/inbox/(?P<username>[-\w]+)/mark/(?P<message_id>[\d]+)/$', api_mark_read, name='api_mark_read'),
-)
+]
