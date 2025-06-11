@@ -3,12 +3,9 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils import timezone
-try:
-    from django.core.urlresolvers import reverse
-except ImportError:
-    from django.urls import reverse
+from django.urls import reverse
 from django.conf import settings
 from django_tables2 import RequestConfig
 
@@ -35,14 +32,8 @@ def inbox(request, template_name='django_messages/inbox.html'):
         ``template_name``: name of the template to use.
     """
     message_list = Message.objects.inbox_for(request.user)
-<<<<<<< HEAD
     f = MessagesFilter(request.GET,queryset=message_list)
     table = MessagesTableInbox(data=f.qs)
-=======
-    return render(request, template_name, {
-        'message_list': message_list,
-    })
->>>>>>> upstream/master
 
     RequestConfig(request,paginate={'per_page':MAX_MESSAGES_RESULTS}).configure(table)
 
@@ -55,7 +46,7 @@ def inbox(request, template_name='django_messages/inbox.html'):
     context['username']=request.user.username
     context['athlete']=request.user
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
+    return render(request, template_name, context)
     
 @login_required
 def outbox(request, template_name='django_messages/outbox.html'):
@@ -65,7 +56,6 @@ def outbox(request, template_name='django_messages/outbox.html'):
         ``template_name``: name of the template to use.
     """
     message_list = Message.objects.outbox_for(request.user)
-<<<<<<< HEAD
     f = MessagesFilter(request.GET,queryset=message_list)
     table = MessagesTableOutbox(data=f.qs)
 
@@ -80,12 +70,7 @@ def outbox(request, template_name='django_messages/outbox.html'):
     context['username']=request.user.username
     context['athlete']=request.user
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
-=======
-    return render(request, template_name, {
-        'message_list': message_list,
-    })
->>>>>>> upstream/master
+    return render(request, template_name, context)
 
 @login_required
 def trash(request, template_name='django_messages/trash.html'):
@@ -97,7 +82,6 @@ def trash(request, template_name='django_messages/trash.html'):
     by sender and recipient.
     """
     message_list = Message.objects.trash_for(request.user)
-<<<<<<< HEAD
     f = MessagesFilter(request.GET,queryset=message_list)
     table = MessagesTableTrash(data=f.qs)
 
@@ -112,22 +96,12 @@ def trash(request, template_name='django_messages/trash.html'):
     context['username']=request.user.username
     context['athlete']=request.user
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
-
-@login_required
-def compose(request, recipient=None, form_class=ComposeForm,
-        template_name='django_messages/compose.html', success_url=None, recipient_filter=None):
-
-=======
-    return render(request, template_name, {
-        'message_list': message_list,
-    })
+    return render(request, template_name, context)
 
 @login_required
 def compose(request, recipient=None, form_class=ComposeForm,
         template_name='django_messages/compose.html', success_url=None,
         recipient_filter=None):
->>>>>>> upstream/master
     """
     Displays and handles the ``form_class`` form to compose new messages.
     Required Arguments: None
@@ -161,7 +135,6 @@ def compose(request, recipient=None, form_class=ComposeForm,
         if recipient is not None:
             recipients = [u for u in User.objects.filter(**{'%s__in' % get_username_field(): [r.strip() for r in recipient.split('+')]})]
             form.fields['recipient'].initial = recipients
-<<<<<<< HEAD
 
     import endu
     context = endu.views.user_results_context(request,request.user.username)
@@ -170,12 +143,7 @@ def compose(request, recipient=None, form_class=ComposeForm,
     context['athlete']=request.user
     context['form']=form
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
-=======
-    return render(request, template_name, {
-        'form': form,
-    })
->>>>>>> upstream/master
+    return render(request, template_name, context)
 
 @login_required
 def reply(request, message_id, form_class=ComposeForm,
@@ -209,12 +177,6 @@ def reply(request, message_id, form_class=ComposeForm,
             'subject': subject_template % {'subject': parent.subject},
             'recipient': [parent.sender,]
             })
-<<<<<<< HEAD
-=======
-    return render(request, template_name, {
-        'form': form,
-    })
->>>>>>> upstream/master
 
     import endu
     context = endu.views.user_results_context(request,request.user.username)
@@ -224,7 +186,7 @@ def reply(request, message_id, form_class=ComposeForm,
     context['form']=form
     context['message']=parent
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
+    return render(request, template_name, context)
         
 @login_required
 def delete(request, message_id, success_url=None):
@@ -333,7 +295,7 @@ def view(request, message_id, form_class=ReplyForm, quote_helper=format_quote,su
 
     context['form'] = form
 
-    return render_to_response(template_name,context,context_instance=RequestContext(request))
+    return render(request, template_name, context)
 
 @login_required
 def view_original_(request, message_id, form_class=ComposeForm, quote_helper=format_quote,
@@ -366,9 +328,7 @@ def view_original_(request, message_id, form_class=ComposeForm, quote_helper=for
             'recipient': [message.sender,]
             })
         context['reply_form'] = form
-<<<<<<< HEAD
-    return render_to_response(template_name, context,
-        context_instance=RequestContext(request))
+    return render(request, template_name, context)
 
 #API
 from api.token import EnduTokenAuthentication,EnduTokenPermission
@@ -393,9 +353,8 @@ def api_inbox(request,username):
     serializer = MessagesSerializer(message_list, many=True)
     try:
         return Response(serializer.data)
-    except Exception, e:
+    except Exception as e:
         return Response({'error':str(e)})
-    return Response({'msg':'str(e)'})
 
 @api_view(['POST',])
 #@authentication_classes((EnduTokenAuthentication,))
@@ -408,8 +367,6 @@ def api_mark_read(request,username,message_id):
         timestamp = m.mark_read()
         m.save()
         return Response({'read_at':timestamp})
-    except Exception, e:
+    except Exception as e:
         return Response({'error':str(e)})
-=======
-    return render(request, template_name, context)
->>>>>>> upstream/master
+    return Response({'msg':'str(e)'})
