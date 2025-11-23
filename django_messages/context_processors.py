@@ -1,5 +1,6 @@
 from django_messages.models import inbox_count_for
 
+
 def _user_is_authenticated(user):
     # django < 2.0
     try:

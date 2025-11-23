@@ -1,10 +1,11 @@
 from django import forms
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
 
 from django_messages.utils import get_user_model
+
 User = get_user_model()
 
 if "pinax.notifications" in settings.INSTALLED_APPS and getattr(settings, 'DJANGO_MESSAGES_NOTIFY', True):
@@ -13,6 +14,7 @@ else:
     notification = None
 
 from django_messages.models import Message
+
 
 class MessageAdminForm(forms.ModelForm):
     """

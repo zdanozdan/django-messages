@@ -1,9 +1,11 @@
 import re
+
 import django
-from django.utils.text import wrap
-from django.utils.translation import gettext, gettext_lazy as _
-from django.template.loader import render_to_string
 from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.text import wrap
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 # favour django-mailer but fall back to django.core.mail
 
@@ -56,6 +58,8 @@ def format_subject(subject):
     }
 
 from django.core.mail import EmailMultiAlternatives
+
+
 def new_message_email(sender, instance, signal, 
         subject_prefix=_('New Message: %(subject)s'),
         template_name="django_messages/new_message.html",
@@ -100,6 +104,7 @@ def new_message_email(sender, instance, signal,
 
 
 from django.contrib.auth import get_user_model as auth_get_user_model
+
 
 def get_user_model():
     return auth_get_user_model()

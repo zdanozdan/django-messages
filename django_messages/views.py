@@ -1,18 +1,23 @@
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import gettext as _
-from django.utils import timezone
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.template import RequestContext
 from django.urls import reverse
-from django.conf import settings
+from django.utils import timezone
+from django.utils.translation import gettext as _
 from django_tables2 import RequestConfig
 
-from django_messages.tables import MessagesTableInbox,MessagesTableOutbox,MessagesTableTrash,MessagesTableView
 from django_messages.filtersets import MessagesFilter
+from django_messages.forms import ComposeForm, ReplyForm
 from django_messages.models import Message
-from django_messages.forms import ComposeForm,ReplyForm
+from django_messages.tables import (
+    MessagesTableInbox,
+    MessagesTableOutbox,
+    MessagesTableTrash,
+    MessagesTableView,
+)
 from django_messages.utils import format_quote, get_user_model, get_username_field
 
 User = get_user_model()
@@ -331,12 +336,18 @@ def view_original_(request, message_id, form_class=ComposeForm, quote_helper=for
     return render(request, template_name, context)
 
 #API
-from api.token import EnduTokenAuthentication,EnduTokenPermission
-from django_messages.serializers import MessagesSerializer
-from rest_framework.response import Response
-from rest_framework.decorators import api_view,authentication_classes,permission_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from api.token import EnduTokenAuthentication, EnduTokenPermission
+from django_messages.serializers import MessagesSerializer
+
 
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))

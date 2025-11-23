@@ -3,17 +3,18 @@ try:
 except ImportError:
     from django.urls import reverse
 
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
+from django.template import Context, Template
 from django.test import TestCase
 from django.test.client import Client, RequestFactory
 from django.utils import timezone
 from django.utils.encoding import force_text
-from django.contrib.auth.models import AnonymousUser
-from django.template import Template, Context
+
+from django_messages.context_processors import inbox
 from django_messages.forms import ComposeForm
 from django_messages.models import Message
-from django_messages.utils import format_subject, format_quote
-from django_messages.context_processors import inbox
+from django_messages.utils import format_quote, format_subject
 
 from .utils import get_user_model
 

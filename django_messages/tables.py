@@ -1,6 +1,7 @@
 import django_tables2 as tables
 from django.utils.translation import ugettext_lazy as _
 
+
 class MessagesTable(tables.Table):
     subject = tables.TemplateColumn(template_name="django_messages/subject_column.html",verbose_name=_('Subject'))
     #body = tables.TemplateColumn(template_name="django_messages/body_column.html",verbose_name=_('Body'))

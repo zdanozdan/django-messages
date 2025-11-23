@@ -1,15 +1,16 @@
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 if "pinax.notifications" in settings.INSTALLED_APPS and getattr(settings, 'DJANGO_MESSAGES_NOTIFY', True):
     from pinax.notifications import models as notification
 else:
     notification = None
 
-from django_messages.models import Message
 from django_messages.fields import CommaSeparatedUserField
+from django_messages.models import Message
+
 
 class ComposeForm(forms.Form):
     """

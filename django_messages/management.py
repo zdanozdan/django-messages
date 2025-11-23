@@ -1,5 +1,5 @@
-from django.db.models import signals
 from django.conf import settings
+from django.db.models import signals
 from django.utils.translation import ugettext_noop as _
 
 if "pinax.notifications" in settings.INSTALLED_APPS and getattr(settings, 'DJANGO_MESSAGES_NOTIFY', True):

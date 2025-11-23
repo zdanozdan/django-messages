@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+
 from django import VERSION
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.path.pardir))

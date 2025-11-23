@@ -1,6 +1,8 @@
 import datetime
+
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
+
 from ...models import Message
 
 
