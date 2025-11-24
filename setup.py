@@ -5,16 +5,14 @@ setup(
     version=__import__('django_messages').__version__,
     description='User-to-user messaging system for Django',
     long_description=open('README.rst').read(),
-    author='Arne Brodowski',
-    author_email='mail@arnebrodowski.de',
-    url='https://github.com/arneb/django-messages',
+    url='https://github.com/zdanozdan/django-messages',
     install_requires=[
         'Django'
     ],
     packages=(
         'django_messages',
         'django_messages.templatetags',
-        'django_messages.migrations',
+        #'django_messages.migrations',
     ),
     package_data={
         'django_messages': [
